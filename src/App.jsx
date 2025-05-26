@@ -32,7 +32,7 @@ export default function App() {
     fetch("/data/recetas_precargadas.json")
       .then(res => res.json())
       .then(data => {
-        setRecetas([...data, ...recetasUsuario]);
+        setRecetas([...data.map(r => ({ ...r, tipo: r.tipo.toLowerCase() })), ...recetasUsuario]);
       });
   }, []);
 
