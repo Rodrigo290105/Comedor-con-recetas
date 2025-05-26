@@ -38,7 +38,7 @@
   },
   {
     "nombre": "Arroz",
-    "tipo": "Acompañamiento",
+    "tipo": "acompañamiento",
     "editable": false,
     "ingredientes": [
       {
@@ -60,7 +60,7 @@
   },
   {
     "nombre": "Arroz amarillo",
-    "tipo": "Acompañamiento",
+    "tipo": "acompañamiento",
     "editable": false,
     "ingredientes": [
       {
@@ -97,7 +97,7 @@
   },
   {
     "nombre": "Arroz con vegetales salteados",
-    "tipo": "Acompañamiento",
+    "tipo": "acompañamiento",
     "editable": false,
     "ingredientes": [
       {
@@ -151,7 +151,7 @@
   },
   {
     "nombre": "Bocaditos de pollo",
-    "tipo": "Acompañamiento",
+    "tipo": "acompañamiento",
     "editable": false,
     "ingredientes": [
       {
@@ -163,7 +163,7 @@
   },
   {
     "nombre": "Bocaditos de pollo",
-    "tipo": "Prinicipal",
+    "tipo": "principal",
     "editable": false,
     "ingredientes": [
       {
@@ -195,7 +195,7 @@
   },
   {
     "nombre": "Budin de pescado",
-    "tipo": "Prinicipal",
+    "tipo": "principal",
     "editable": false,
     "ingredientes": [
       {
@@ -331,7 +331,7 @@
   },
   {
     "nombre": "Carbonada Criolla",
-    "tipo": "Prinicipal",
+    "tipo": "principal",
     "editable": false,
     "ingredientes": [
       {
@@ -398,7 +398,7 @@
   },
   {
     "nombre": "Carne a la Portuguesa",
-    "tipo": "Prinicipal",
+    "tipo": "principal",
     "editable": false,
     "ingredientes": [
       {
@@ -455,7 +455,7 @@
   },
   {
     "nombre": "Cazuela de lentejas",
-    "tipo": "Prinicipal",
+    "tipo": "principal",
     "editable": false,
     "ingredientes": [
       {
@@ -532,7 +532,7 @@
   },
   {
     "nombre": "Chop Suey de Cerdo",
-    "tipo": "Prinicipal",
+    "tipo": "principal",
     "editable": false,
     "ingredientes": [
       {
@@ -594,7 +594,7 @@
   },
   {
     "nombre": "Chupín de pescado y verduras",
-    "tipo": "Prinicipal",
+    "tipo": "principal",
     "editable": false,
     "ingredientes": [
       {
@@ -727,7 +727,7 @@
   },
   {
     "nombre": "Croquetas de Atún y papas",
-    "tipo": "Prinicipal",
+    "tipo": "principal",
     "editable": false,
     "ingredientes": [
       {
@@ -779,7 +779,7 @@
   },
   {
     "nombre": "Ensalada Completa",
-    "tipo": "Prinicipal",
+    "tipo": "principal",
     "editable": false,
     "ingredientes": [
       {
@@ -831,7 +831,7 @@
   },
   {
     "nombre": "Ensalada de leguminosas y vegetales",
-    "tipo": "Acompañamiento",
+    "tipo": "acompañamiento",
     "editable": false,
     "ingredientes": [
       {
@@ -878,7 +878,7 @@
   },
   {
     "nombre": "Ensalada de vegetales",
-    "tipo": "Acompañamiento",
+    "tipo": "acompañamiento",
     "editable": false,
     "ingredientes": [
       {
@@ -905,7 +905,7 @@
   },
   {
     "nombre": "Ensalada jardinera",
-    "tipo": "Acompañamiento",
+    "tipo": "acompañamiento",
     "editable": false,
     "ingredientes": [
       {
@@ -937,7 +937,7 @@
   },
   {
     "nombre": "Ensalada primavera",
-    "tipo": "Acompañamiento",
+    "tipo": "acompañamiento",
     "editable": false,
     "ingredientes": [
       {
@@ -974,7 +974,7 @@
   },
   {
     "nombre": "Fideo",
-    "tipo": "Acompañamiento",
+    "tipo": "acompañamiento",
     "editable": false,
     "ingredientes": [
       {
@@ -996,7 +996,7 @@
   },
   {
     "nombre": "Hamburgesa de pescado",
-    "tipo": "Prinicipal",
+    "tipo": "principal",
     "editable": false,
     "ingredientes": [
       {
@@ -1053,7 +1053,7 @@
   },
   {
     "nombre": "Hortalizas asadas",
-    "tipo": "Acompañamiento",
+    "tipo": "acompañamiento",
     "editable": false,
     "ingredientes": [
       {
@@ -1090,7 +1090,7 @@
   },
   {
     "nombre": "Lasaña",
-    "tipo": "Prinicipal",
+    "tipo": "principal",
     "editable": false,
     "ingredientes": [
       {
@@ -1193,7 +1193,7 @@
   },
   {
     "nombre": "Pan de carne",
-    "tipo": "Prinicipal",
+    "tipo": "principal",
     "editable": false,
     "ingredientes": [
       {
@@ -1250,7 +1250,7 @@
   },
   {
     "nombre": "Papas al natural",
-    "tipo": "Acompañamiento",
+    "tipo": "acompañamiento",
     "editable": false,
     "ingredientes": [
       {
@@ -1272,7 +1272,7 @@
   },
   {
     "nombre": "Pasta con verdusalsa",
-    "tipo": "Prinicipal",
+    "tipo": "principal",
     "editable": false,
     "ingredientes": [
       {
@@ -1334,7 +1334,7 @@
   },
   {
     "nombre": "Pasta sorpresa",
-    "tipo": "Prinicipal",
+    "tipo": "principal",
     "editable": false,
     "ingredientes": [
       {
@@ -1381,7 +1381,7 @@
   },
   {
     "nombre": "Pastel de carne y berenjenas",
-    "tipo": "Prinicipal",
+    "tipo": "principal",
     "editable": false,
     "ingredientes": [
       {
@@ -1448,7 +1448,7 @@
   },
   {
     "nombre": "Pastel de carne y papa",
-    "tipo": "Prinicipal",
+    "tipo": "principal",
     "editable": false,
     "ingredientes": [
       {
@@ -1500,7 +1500,7 @@
   },
   {
     "nombre": "Pollo colorido",
-    "tipo": "Prinicipal",
+    "tipo": "principal",
     "editable": false,
     "ingredientes": [
       {
@@ -1572,7 +1572,7 @@
   },
   {
     "nombre": "Pollo con salsa blanca y verduras",
-    "tipo": "Prinicipal",
+    "tipo": "principal",
     "editable": false,
     "ingredientes": [
       {
@@ -1624,7 +1624,7 @@
   },
   {
     "nombre": "Pure triple",
-    "tipo": "Acompañamiento",
+    "tipo": "acompañamiento",
     "editable": false,
     "ingredientes": [
       {
@@ -1666,7 +1666,7 @@
   },
   {
     "nombre": "Puré de papas",
-    "tipo": "Acompañamiento",
+    "tipo": "acompañamiento",
     "editable": false,
     "ingredientes": [
       {
@@ -1698,7 +1698,7 @@
   },
   {
     "nombre": "Puré de papas instantaneo",
-    "tipo": "Acompañamiento",
+    "tipo": "acompañamiento",
     "editable": false,
     "ingredientes": [
       {
@@ -1725,7 +1725,7 @@
   },
   {
     "nombre": "Torta de atún",
-    "tipo": "Prinicipal",
+    "tipo": "principal",
     "editable": false,
     "ingredientes": [
       {
@@ -1762,7 +1762,7 @@
   },
   {
     "nombre": "Torta de carne y vegetales",
-    "tipo": "Prinicipal",
+    "tipo": "principal",
     "editable": false,
     "ingredientes": [
       {
@@ -1809,7 +1809,7 @@
   },
   {
     "nombre": "Tortilla de papa, vegetales y pollo",
-    "tipo": "Prinicipal",
+    "tipo": "principal",
     "editable": false,
     "ingredientes": [
       {
