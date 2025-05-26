@@ -28,10 +28,12 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    const recetasGuardadas = localStorage.getItem("recetas");
-    if (recetasGuardadas) {
-      setRecetas(JSON.parse(recetasGuardadas));
-    }
+    const recetasUsuario = JSON.parse(localStorage.getItem("recetas")) || [];
+    fetch("/data/recetas_precargadas.json")
+      .then(res => res.json())
+      .then(data => {
+        setRecetas([...data, ...recetasUsuario]);
+      });
   }, []);
 
   useEffect(() => {
