@@ -24,56 +24,66 @@ export default function App() {
   });
   const [recetaEditando, setRecetaEditando] = useState(null);
 
-  // Autenticación
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => setUsuario(user));
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUsuario(user);
+    });
     return () => unsubscribe();
   }, []);
 
-  // Cargar recetas precargadas + usuario
+  // CARGA RECETAS (precargadas y usuario), NORMALIZA TIPO
   useEffect(() => {
     const recetasUsuario = JSON.parse(localStorage.getItem("recetas")) || [];
     fetch("/data/recetas_precargadas.json")
-      .then((res) => res.json())
-      .then((data) => {
-        // Normaliza el tipo y mapea bien el nombre del ingrediente
-        const recetasNormalizadas = data.map((r) => {
+      .then(res => res.json())
+      .then(data => {
+        const recetasNormalizadas = data.map(r => {
+          // Normaliza el tipo (quita tildes y pasa a minúscula)
           const tipoNormalizado = r.tipo
             ? r.tipo.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
             : "";
+          // Si vino como 'acompanamiento', lo cambiamos a 'acompañamiento'
           const tipoFinal = tipoNormalizado === "acompanamiento" ? "acompañamiento" : tipoNormalizado;
-          const ingredientes = (r.ingredientes || []).map((ing) => ({
+
+          // Corrige el nombre del ingrediente si viene como 'ingrediente'
+          const ingredientes = (r.ingredientes || []).map(ing => ({
             nombre: ing.nombre || ing.ingrediente || "",
-            unidad: ing.unidad || "",
-            cantidad: ing.cantidad || 0,
+            unidad: ing.unidad,
+            cantidad: ing.cantidad
           }));
-          return { ...r, tipo: tipoFinal, ingredientes };
+          return {
+            ...r,
+            tipo: tipoFinal,
+            ingredientes
+          };
         });
         setRecetas([...recetasNormalizadas, ...recetasUsuario]);
       });
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("recetas", JSON.stringify(recetas.filter(r => r.fromUser)));
+    localStorage.setItem("recetas", JSON.stringify(recetas));
   }, [recetas]);
 
-  // Cálculo de pedido
   const calcularPedido = () => {
     const ingredientesTotales = {};
     const dias = filtroDia === "semana" ? Object.values(menu) : [menu[filtroDia]];
 
     dias.forEach(({ principal, acompañamiento, postre }) => {
       [principal, acompañamiento, postre].forEach((rec) => {
-        const receta = recetas.find((r) => r.nombre === rec);
+        const receta = recetas.find(r => r.nombre === rec);
         if (receta) {
           receta.ingredientes.forEach(({ nombre, unidad, cantidad }) => {
             const clave = `${nombre.trim().toLowerCase()}-${unidad.trim().toLowerCase()}`;
             if (!ingredientesTotales[clave]) ingredientesTotales[clave] = 0;
-            // Frutas
+
             const esFruta =
               receta.tipo === "fruta" ||
-              ["banana", "manzana", "naranja", "pera", "mandarina", "ciruela"].includes(receta.nombre.toLowerCase());
+              ["banana", "manzana", "naranja", "pera", "mandarina", "ciruela"].includes(
+                receta.nombre.toLowerCase()
+              );
             const cantFinal = esFruta ? 1 : cantidad;
+
             ingredientesTotales[clave] += cantFinal * comensales;
           });
         }
@@ -102,7 +112,6 @@ export default function App() {
     setResultado(lista);
   };
 
-  // Excel
   const descargarExcel = () => {
     const ws = XLSX.utils.json_to_sheet(resultado);
     const wb = XLSX.utils.book_new();
@@ -110,10 +119,9 @@ export default function App() {
     XLSX.writeFile(wb, "pedido_comedor.xlsx");
   };
 
-  // Edición de ingredientes
   const handleModificarIngrediente = (index, field, value) => {
-    const receta = { ...nuevaReceta };
-    receta.ingredientes = [...receta.ingredientes];
+    const receta =
+      recetaEditando !== null ? { ...nuevaReceta } : { ...nuevaReceta };
     receta.ingredientes[index][field] = field === "cantidad" ? Number(value) : value;
     setNuevaReceta(receta);
   };
@@ -131,11 +139,11 @@ export default function App() {
   const handleGuardarReceta = () => {
     if (recetaEditando !== null) {
       const nuevas = [...recetas];
-      nuevas[recetaEditando] = { ...nuevaReceta, fromUser: true };
+      nuevas[recetaEditando] = { ...nuevaReceta };
       setRecetas(nuevas);
       setRecetaEditando(null);
     } else {
-      setRecetas([...recetas, { ...nuevaReceta, fromUser: true }]);
+      setRecetas([...recetas, nuevaReceta]);
       setNuevaReceta({
         nombre: "",
         tipo: "principal",
@@ -145,9 +153,8 @@ export default function App() {
   };
 
   const editarReceta = (index) => {
-    // Al editar, cargar el array de ingredientes completo
     setRecetaEditando(index);
-    setNuevaReceta({ ...recetas[index], ingredientes: [...recetas[index].ingredientes] });
+    setNuevaReceta({ ...recetas[index] });
   };
 
   const eliminarReceta = (nombre) => {
@@ -164,90 +171,18 @@ export default function App() {
       <button onClick={() => signOut(auth)} style={{ float: "right" }}>
         🚪 Cerrar sesión
       </button>
-      <h1>📋 Recetas</h1>
-      <input
-        placeholder="Nombre de la receta"
-        value={nuevaReceta.nombre}
-        onChange={(e) => setNuevaReceta({ ...nuevaReceta, nombre: e.target.value })}
-        style={{ marginRight: 10 }}
-      />
-      <select
-        value={nuevaReceta.tipo}
-        onChange={(e) => setNuevaReceta({ ...nuevaReceta, tipo: e.target.value })}
-      >
-        <option value="principal">Principal</option>
-        <option value="acompañamiento">Acompañamiento</option>
-        <option value="postre">Postre</option>
-        <option value="fruta">Fruta</option>
-      </select>
-      {nuevaReceta.ingredientes.map((ing, i) => (
-        <div key={i}>
-          <input
-            placeholder="Ingrediente"
-            value={ing.nombre}
-            onChange={(e) => handleModificarIngrediente(i, "nombre", e.target.value)}
-            style={{ marginRight: 5 }}
-          />
-          <input
-            placeholder="Unidad"
-            value={ing.unidad}
-            onChange={(e) => handleModificarIngrediente(i, "unidad", e.target.value)}
-            style={{ marginRight: 5 }}
-          />
-          <input
-            type="number"
-            placeholder="Cantidad"
-            value={ing.cantidad}
-            onChange={(e) => handleModificarIngrediente(i, "cantidad", e.target.value)}
-            style={{ marginRight: 5 }}
-          />
-        </div>
-      ))}
-      <button onClick={handleAgregarIngrediente}>➕ Añadir ingrediente</button>
-      <button onClick={handleGuardarReceta} style={{ marginLeft: 10 }}>
-        💾 Guardar
-      </button>
 
-      <h2 style={{ marginTop: 30 }}>📚 Recetas guardadas</h2>
-      <ul>
-        {recetas.map((r, i) => (
-          <li key={i}>
-            {r.nombre} ({r.tipo})
-            <button
-              onClick={() => {
-                editarReceta(i);
-              }}
-              style={{ marginLeft: 10 }}
-            >
-              📝 Editar
-            </button>
-            <button
-              onClick={() => eliminarReceta(r.nombre)}
-              style={{ marginLeft: 5 }}
-            >
-              🗑️ Eliminar
-            </button>
-          </li>
-        ))}
-      </ul>
-
-      <h2 style={{ marginTop: 40 }}>📅 Menú semanal</h2>
+      {/* =========== MENÚ SEMANAL =========== */}
+      <h2 style={{ marginTop: 0 }}>📅 Menú semanal</h2>
       <div style={{ marginBottom: 20 }}>
         <label>📆 Ver pedido de:</label>
-        <select
-          value={filtroDia}
-          onChange={(e) => setFiltroDia(e.target.value)}
-          style={{ marginLeft: 10 }}
-        >
+        <select value={filtroDia} onChange={(e) => setFiltroDia(e.target.value)} style={{ marginLeft: 10 }}>
           <option value="semana">Toda la semana</option>
           {Object.keys(menu).map((dia) => (
-            <option key={dia} value={dia}>
-              {dia.charAt(0).toUpperCase() + dia.slice(1)}
-            </option>
+            <option key={dia} value={dia}>{dia.charAt(0).toUpperCase() + dia.slice(1)}</option>
           ))}
         </select>
       </div>
-
       {Object.keys(menu).map((dia) => (
         <div key={dia} style={{ marginBottom: 10 }}>
           <strong>{dia.toUpperCase()}:</strong>
@@ -276,6 +211,7 @@ export default function App() {
         </div>
       ))}
 
+      {/* =========== PEDIDO =========== */}
       <div style={{ marginTop: 20 }}>
         <label>👥 Comensales:</label>
         <input
@@ -288,7 +224,6 @@ export default function App() {
           🧮 Calcular pedido
         </button>
       </div>
-
       {resultado.length > 0 && (
         <div style={{ marginTop: 30 }}>
           <h3>📦 Ingredientes Totales</h3>
@@ -327,6 +262,79 @@ export default function App() {
           </button>
         </div>
       )}
+
+      {/* =========== AGREGAR RECETA =========== */}
+      <h2 style={{ marginTop: 40 }}>➕ Agregar nueva receta</h2>
+      <input
+        placeholder="Nombre de la receta"
+        value={nuevaReceta.nombre}
+        onChange={(e) =>
+          setNuevaReceta({ ...nuevaReceta, nombre: e.target.value })
+        }
+        style={{ marginRight: 10 }}
+      />
+      <select
+        value={nuevaReceta.tipo}
+        onChange={(e) =>
+          setNuevaReceta({ ...nuevaReceta, tipo: e.target.value })
+        }
+      >
+        <option value="principal">Principal</option>
+        <option value="acompañamiento">Acompañamiento</option>
+        <option value="postre">Postre</option>
+        <option value="fruta">Fruta</option>
+      </select>
+      {nuevaReceta.ingredientes.map((ing, i) => (
+        <div key={i}>
+          <input
+            placeholder="Ingrediente"
+            value={ing.nombre}
+            onChange={(e) => handleModificarIngrediente(i, "nombre", e.target.value)}
+            style={{ marginRight: 5 }}
+          />
+          <input
+            placeholder="Unidad"
+            value={ing.unidad}
+            onChange={(e) => handleModificarIngrediente(i, "unidad", e.target.value)}
+            style={{ marginRight: 5 }}
+          />
+          <input
+            type="number"
+            placeholder="Cantidad"
+            value={ing.cantidad}
+            onChange={(e) => handleModificarIngrediente(i, "cantidad", e.target.value)}
+            style={{ marginRight: 5 }}
+          />
+        </div>
+      ))}
+      <button onClick={handleAgregarIngrediente}>➕ Añadir ingrediente</button>
+      <button onClick={handleGuardarReceta} style={{ marginLeft: 10 }}>
+        💾 Guardar
+      </button>
+
+      {/* =========== RECETAS GUARDADAS =========== */}
+      <h2 style={{ marginTop: 30 }}>📚 Recetas guardadas</h2>
+      <ul>
+        {recetas.map((r, i) => (
+          <li key={i}>
+            {r.nombre} ({r.tipo})
+            <button
+              onClick={() => {
+                editarReceta(i);
+              }}
+              style={{ marginLeft: 10 }}
+            >
+              📝 Editar
+            </button>
+            <button
+              onClick={() => eliminarReceta(r.nombre)}
+              style={{ marginLeft: 5 }}
+            >
+              🗑️ Eliminar
+            </button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
