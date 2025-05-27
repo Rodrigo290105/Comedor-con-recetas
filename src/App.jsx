@@ -11,13 +11,17 @@ export default function App() {
   const [resultado, setResultado] = useState([]);
   const [filtroDia, setFiltroDia] = useState("semana");
   const [menu, setMenu] = useState({
-    lunes: { principal: "", acompanamiento: "", postre: "" },
-    martes: { principal: "", acompanamiento: "", postre: "" },
-    miercoles: { principal: "", acompanamiento: "", postre: "" },
-    jueves: { principal: "", acompanamiento: "", postre: "" },
-    viernes: { principal: "", acompanamiento: "", postre: "" },
+    lunes: { principal: "", acompañamiento: "", postre: "" },
+    martes: { principal: "", acompañamiento: "", postre: "" },
+    miercoles: { principal: "", acompañamiento: "", postre: "" },
+    jueves: { principal: "", acompañamiento: "", postre: "" },
+    viernes: { principal: "", acompañamiento: "", postre: "" },
   });
-  const [nuevaReceta, setNuevaReceta] = useState({ nombre: "", tipo: "principal", ingredientes: [{ nombre: "", unidad: "g", cantidad: 0 }] });
+  const [nuevaReceta, setNuevaReceta] = useState({
+    nombre: "",
+    tipo: "principal",
+    ingredientes: [{ nombre: "", unidad: "g", cantidad: 0 }]
+  });
   const [recetaEditando, setRecetaEditando] = useState(null);
 
   useEffect(() => {
@@ -32,7 +36,10 @@ export default function App() {
     fetch("/data/recetas_precargadas.json")
       .then(res => res.json())
       .then(data => {
-        setRecetas([...data.map(r => ({ ...r, tipo: r.tipo.toLowerCase() })), ...recetasUsuario]);
+        setRecetas([
+          ...data.map(r => ({ ...r, tipo: r.tipo.toLowerCase() })),
+          ...recetasUsuario
+        ]);
       });
   }, []);
 
@@ -44,8 +51,8 @@ export default function App() {
     const ingredientesTotales = {};
     const dias = filtroDia === "semana" ? Object.values(menu) : [menu[filtroDia]];
 
-    dias.forEach(({ principal, acompanamiento, postre }) => {
-      [principal, acompanamiento, postre].forEach((rec) => {
+    dias.forEach(({ principal, acompañamiento, postre }) => {
+      [principal, acompañamiento, postre].forEach((rec) => {
         const receta = recetas.find(r => r.nombre === rec);
         if (receta) {
           receta.ingredientes.forEach(({ nombre, unidad, cantidad }) => {
@@ -108,12 +115,16 @@ export default function App() {
   const handleGuardarReceta = () => {
     if (recetaEditando !== null) {
       const nuevas = [...recetas];
-      nuevas[recetaEditando] = { ...recetas[recetaEditando] };
+      nuevas[recetaEditando] = { ...nuevaReceta };
       setRecetas(nuevas);
       setRecetaEditando(null);
     } else {
       setRecetas([...recetas, nuevaReceta]);
-      setNuevaReceta({ nombre: "", tipo: "principal", ingredientes: [{ nombre: "", unidad: "g", cantidad: 0 }] });
+      setNuevaReceta({
+        nombre: "",
+        tipo: "principal",
+        ingredientes: [{ nombre: "", unidad: "g", cantidad: 0 }]
+      });
     }
   };
 
@@ -134,8 +145,8 @@ export default function App() {
   return (
     <div style={{ padding: 20 }}>
       <button onClick={() => signOut(auth)} style={{ float: "right" }}>🚪 Cerrar sesión</button>
-
       <h1>📋 Recetas</h1>
+
       <input
         placeholder="Nombre de la receta"
         value={nuevaReceta.nombre}
@@ -147,10 +158,11 @@ export default function App() {
         onChange={(e) => setNuevaReceta({ ...nuevaReceta, tipo: e.target.value })}
       >
         <option value="principal">Principal</option>
-        <option value="acompanamiento">Acompañamiento</option>
+        <option value="acompañamiento">Acompañamiento</option>
         <option value="postre">Postre</option>
         <option value="fruta">Fruta</option>
       </select>
+
       {nuevaReceta.ingredientes.map((ing, i) => (
         <div key={i}>
           <input
@@ -202,7 +214,7 @@ export default function App() {
       {Object.keys(menu).map((dia) => (
         <div key={dia} style={{ marginBottom: 10 }}>
           <strong>{dia.toUpperCase()}:</strong>
-          {["principal", "acompanamiento", "postre"].map((tipo) => (
+          {["principal", "acompañamiento", "postre"].map((tipo) => (
             <select
               key={tipo}
               value={menu[dia][tipo]}
