@@ -167,13 +167,33 @@ export default function App() {
   }
 
   return (
-    <div style={{ padding: 20 }}>
-      <button onClick={() => signOut(auth)} style={{ float: "right" }}>
+    <div style={{
+      background: "#23272f",
+      minHeight: "100vh",
+      color: "#fafafa",
+      fontFamily: "sans-serif",
+      padding: 30
+    }}>
+      <button
+        onClick={() => signOut(auth)}
+        style={{
+          float: "right",
+          background: "#444",
+          color: "#fff",
+          borderRadius: 10,
+          padding: "6px 20px",
+          marginBottom: 10
+        }}>
         🚪 Cerrar sesión
       </button>
 
       {/* =========== MENÚ SEMANAL =========== */}
-      <h2 style={{ marginTop: 0 }}>📅 Menú semanal</h2>
+      <h2 style={{
+        marginTop: 0,
+        color: "#fff",
+        fontSize: "1.7em",
+        letterSpacing: 1
+      }}>📅 Menú semanal</h2>
       <div style={{ marginBottom: 20 }}>
         <label>📆 Ver pedido de:</label>
         <select value={filtroDia} onChange={(e) => setFiltroDia(e.target.value)} style={{ marginLeft: 10 }}>
@@ -218,60 +238,71 @@ export default function App() {
           type="number"
           value={comensales}
           onChange={(e) => setComensales(Number(e.target.value))}
-          style={{ marginLeft: 10 }}
+          style={{ marginLeft: 10, borderRadius: 5, padding: 4 }}
         />
-        <button onClick={calcularPedido} style={{ marginLeft: 10 }}>
+        <button
+          onClick={calcularPedido}
+          style={{
+            marginLeft: 10,
+            background: "#3c8f4a",
+            color: "#fff",
+            borderRadius: 7,
+            padding: "7px 18px",
+            fontWeight: 600
+          }}>
           🧮 Calcular pedido
         </button>
       </div>
       {resultado.length > 0 && (
         <div style={{ marginTop: 30 }}>
-          <h3>📦 Ingredientes Totales</h3>
-          <table style={{ borderCollapse: "collapse", width: "100%" }}>
+          <h3 style={{ marginTop: 0, color: "#fff" }}>📦 Ingredientes Totales</h3>
+          <table style={{
+            borderCollapse: "collapse",
+            width: "100%",
+            background: "#292d37",
+            borderRadius: 12,
+            color: "#fafafa"
+          }}>
             <thead>
               <tr>
-                <th style={{ border: "1px solid #ccc", padding: 8 }}>
-                  Ingrediente
-                </th>
-                <th style={{ border: "1px solid #ccc", padding: 8 }}>
-                  Cantidad
-                </th>
-                <th style={{ border: "1px solid #ccc", padding: 8 }}>
-                  Unidad
-                </th>
+                <th style={{ border: "1px solid #888", padding: 8 }}>Ingrediente</th>
+                <th style={{ border: "1px solid #888", padding: 8 }}>Cantidad</th>
+                <th style={{ border: "1px solid #888", padding: 8 }}>Unidad</th>
               </tr>
             </thead>
             <tbody>
               {resultado.map((r, i) => (
                 <tr key={i}>
-                  <td style={{ border: "1px solid #ccc", padding: 8 }}>
-                    {r.nombre}
-                  </td>
-                  <td style={{ border: "1px solid #ccc", padding: 8 }}>
-                    {r.cantidad}
-                  </td>
-                  <td style={{ border: "1px solid #ccc", padding: 8 }}>
-                    {r.unidad}
-                  </td>
+                  <td style={{ border: "1px solid #333", padding: 8 }}>{r.nombre}</td>
+                  <td style={{ border: "1px solid #333", padding: 8 }}>{r.cantidad}</td>
+                  <td style={{ border: "1px solid #333", padding: 8 }}>{r.unidad}</td>
                 </tr>
               ))}
             </tbody>
           </table>
-          <button onClick={descargarExcel} style={{ marginTop: 10 }}>
+          <button
+            onClick={descargarExcel}
+            style={{
+              marginTop: 10,
+              background: "#2072bc",
+              color: "#fff",
+              borderRadius: 8,
+              padding: "7px 22px"
+            }}>
             ⬇️ Descargar Excel
           </button>
         </div>
       )}
 
       {/* =========== AGREGAR RECETA =========== */}
-      <h2 style={{ marginTop: 40 }}>➕ Agregar nueva receta</h2>
+      <h2 style={{ marginTop: 40, color: "#fff" }}>➕ Agregar nueva receta</h2>
       <input
         placeholder="Nombre de la receta"
         value={nuevaReceta.nombre}
         onChange={(e) =>
           setNuevaReceta({ ...nuevaReceta, nombre: e.target.value })
         }
-        style={{ marginRight: 10 }}
+        style={{ marginRight: 10, borderRadius: 5, padding: 5 }}
       />
       <select
         value={nuevaReceta.tipo}
@@ -285,35 +316,53 @@ export default function App() {
         <option value="fruta">Fruta</option>
       </select>
       {nuevaReceta.ingredientes.map((ing, i) => (
-        <div key={i}>
+        <div key={i} style={{ marginTop: 4 }}>
           <input
             placeholder="Ingrediente"
             value={ing.nombre}
             onChange={(e) => handleModificarIngrediente(i, "nombre", e.target.value)}
-            style={{ marginRight: 5 }}
+            style={{ marginRight: 5, borderRadius: 5, padding: 4 }}
           />
           <input
             placeholder="Unidad"
             value={ing.unidad}
             onChange={(e) => handleModificarIngrediente(i, "unidad", e.target.value)}
-            style={{ marginRight: 5 }}
+            style={{ marginRight: 5, borderRadius: 5, padding: 4 }}
           />
           <input
             type="number"
             placeholder="Cantidad"
             value={ing.cantidad}
             onChange={(e) => handleModificarIngrediente(i, "cantidad", e.target.value)}
-            style={{ marginRight: 5 }}
+            style={{ marginRight: 5, borderRadius: 5, padding: 4 }}
           />
         </div>
       ))}
-      <button onClick={handleAgregarIngrediente}>➕ Añadir ingrediente</button>
-      <button onClick={handleGuardarReceta} style={{ marginLeft: 10 }}>
+      <button
+        onClick={handleAgregarIngrediente}
+        style={{
+          marginTop: 8,
+          background: "#2051bc",
+          color: "#fff",
+          borderRadius: 7,
+          padding: "7px 18px"
+        }}>
+        ➕ Añadir ingrediente
+      </button>
+      <button
+        onClick={handleGuardarReceta}
+        style={{
+          marginLeft: 10,
+          background: "#238c32",
+          color: "#fff",
+          borderRadius: 8,
+          padding: "7px 22px"
+        }}>
         💾 Guardar
       </button>
 
       {/* =========== RECETAS GUARDADAS =========== */}
-      <h2 style={{ marginTop: 30 }}>📚 Recetas guardadas</h2>
+      <h2 style={{ marginTop: 30, color: "#fff" }}>📚 Recetas guardadas</h2>
       <ul>
         {recetas.map((r, i) => (
           <li key={i}>
@@ -322,13 +371,27 @@ export default function App() {
               onClick={() => {
                 editarReceta(i);
               }}
-              style={{ marginLeft: 10 }}
+              style={{
+                marginLeft: 10,
+                background: "#292d37",
+                color: "#fff",
+                border: "none",
+                borderRadius: 6,
+                padding: "4px 14px"
+              }}
             >
               📝 Editar
             </button>
             <button
               onClick={() => eliminarReceta(r.nombre)}
-              style={{ marginLeft: 5 }}
+              style={{
+                marginLeft: 5,
+                background: "#B94B4B",
+                color: "#fff",
+                border: "none",
+                borderRadius: 6,
+                padding: "4px 14px"
+              }}
             >
               🗑️ Eliminar
             </button>
