@@ -3,12 +3,11 @@ import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
 import { db } from "./firebase";
 import * as XLSX from "xlsx";
 
-// Utilidad para formatear fecha
 function formatoFecha(fecha) {
   try {
     if (!fecha) return "";
     const date = typeof fecha === "string" ? new Date(fecha) : fecha.toDate ? fecha.toDate() : fecha;
-    return date.toLocaleString("es-UY");
+    return date.toLocaleDateString("es-UY");
   } catch {
     return "";
   }
@@ -22,44 +21,68 @@ export default function HistorialPedidos({ usuario }) {
 
   useEffect(() => {
     if (!usuario) return;
-    // Consulta Firestore por usuario
     const fetchPedidos = async () => {
       setCargando(true);
-      let q = query(
+      const q = query(
         collection(db, "pedidos"),
         where("uid", "==", usuario.uid),
         orderBy("fecha", "desc")
       );
-      const querySnapshot = await getDocs(q);
+      const snapshot = await getDocs(q);
       const datos = [];
-      querySnapshot.forEach(doc => datos.push({ id: doc.id, ...doc.data() }));
+      snapshot.forEach(doc => datos.push({ id: doc.id, ...doc.data() }));
       setPedidos(datos);
       setCargando(false);
     };
     fetchPedidos();
   }, [usuario]);
 
-  // Filtra pedidos por fechas
   const pedidosFiltrados = pedidos.filter(p => {
     if (!fechaInicio && !fechaFin) return true;
-    const fecha = p.fecha instanceof Date ? p.fecha : (p.fecha && p.fecha.toDate ? p.fecha.toDate() : new Date(p.fecha));
+    const fecha = p.fecha instanceof Date ? p.fecha : (p.fecha?.toDate ? p.fecha.toDate() : new Date(p.fecha));
     if (fechaInicio && fecha < new Date(fechaInicio)) return false;
     if (fechaFin && fecha > new Date(fechaFin + "T23:59:59")) return false;
     return true;
   });
 
-  // Descargar historial a Excel
-  const descargarExcelHistorial = () => {
-    const datosExcel = pedidosFiltrados.map((p) => ({
-      Fecha: formatoFecha(p.fecha),
-      Comensales: p.comensales,
-      "Menú (JSON)": JSON.stringify(p.menu),
-      Ingredientes: p.ingredientes.map(i => `${i.nombre}: ${i.cantidad} ${i.unidad}`).join(", "),
+  const descargarExcel = () => {
+    // HOJA 1 - Detalle diario
+    const hojaDetalle = pedidosFiltrados.flatMap(p => {
+      const fecha = formatoFecha(p.fecha);
+      return [
+        { campo: "Fecha", valor: fecha },
+        { campo: "Principal", valor: p.menu?.lunes?.principal || "" },
+        { campo: "Acompañamiento", valor: p.menu?.lunes?.acompañamiento || "" },
+        { campo: "Postre", valor: p.menu?.lunes?.postre || "" },
+        { campo: "Ingredientes", valor: "" },
+        ...p.ingredientes.map(i => ({ campo: i.nombre, valor: i.cantidad }))
+      ];
+    });
+
+    const wsDetalle = XLSX.utils.json_to_sheet(hojaDetalle, { header: ["campo", "valor"] });
+
+    // HOJA 2 - Resumen mensual
+    const resumen = {};
+    pedidosFiltrados.forEach(p => {
+      (p.ingredientes || []).forEach(i => {
+        const nombre = i.nombre.toLowerCase();
+        if (!resumen[nombre]) resumen[nombre] = 0;
+        resumen[nombre] += Number(i.cantidad);
+      });
+    });
+
+    const hojaResumen = Object.entries(resumen).map(([ing, cant]) => ({
+      ingrediente: ing,
+      total: cant
     }));
-    const ws = XLSX.utils.json_to_sheet(datosExcel);
+
+    const wsResumen = XLSX.utils.json_to_sheet(hojaResumen);
+
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Historial");
-    XLSX.writeFile(wb, "historial_pedidos.xlsx");
+    XLSX.utils.book_append_sheet(wb, wsDetalle, "Semana a semana");
+    XLSX.utils.book_append_sheet(wb, wsResumen, "Resumen");
+
+    XLSX.writeFile(wb, "historial_pedidos_comedor.xlsx");
   };
 
   return (
@@ -74,19 +97,20 @@ export default function HistorialPedidos({ usuario }) {
           Hasta:{" "}
           <input type="date" value={fechaFin} onChange={e => setFechaFin(e.target.value)} style={{ marginRight: 16 }} />
         </label>
-        <button onClick={descargarExcelHistorial} style={{
+        <button onClick={descargarExcel} style={{
           background: "#2072bc",
           color: "#fff",
           borderRadius: 8,
           padding: "7px 22px"
         }}>
-          ⬇️ Descargar historial Excel
+          ⬇️ Descargar Excel completo
         </button>
       </div>
+
       {cargando ? (
         <p style={{ color: "#fafafa" }}>Cargando historial...</p>
       ) : pedidosFiltrados.length === 0 ? (
-        <p style={{ color: "#fafafa" }}>No hay pedidos para mostrar en este período.</p>
+        <p style={{ color: "#fafafa" }}>No hay pedidos para mostrar.</p>
       ) : (
         <table style={{
           borderCollapse: "collapse",
